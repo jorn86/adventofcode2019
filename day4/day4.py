@@ -1,5 +1,13 @@
 def grouped(p):
-    return p[0] == p[1] or p[1] == p[2] or p[2] == p[3] or p[3] == p[4] or p[4] == p[5]
+    if len(p) < 2:
+        return False
+    if p[0] != p[1]:
+        return grouped(p[1:])
+    if len(p) == 2 or p[1] != p[2]:
+        return True
+    while len(p) > 1 and p[0] == p[1]:
+        p = p[1:]
+    return grouped(p[0:])
 
 
 def test(p):
