@@ -1,24 +1,11 @@
+from IntCoder import IntCoder
+
+
 def run(input1, input2):
-    pointer = 0
     memory = [int(i) for i in open('./input.txt', 'r').read().split(',')]
     memory[1] = input1
     memory[2] = input2
-
-    def step(address):
-        opcode = memory[address]
-        i1 = memory[address + 1]
-        i2 = memory[address + 2]
-        i3 = memory[address + 3]
-
-        if opcode == 1:
-            memory[i3] = memory[i1] + memory[i2]
-        if opcode == 2:
-            memory[i3] = memory[i1] * memory[i2]
-
-    while memory[pointer] is not 99:
-        step(pointer)
-        pointer += 4
-
+    IntCoder(memory).run()
     return memory[0]
 
 
