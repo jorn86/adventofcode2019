@@ -100,13 +100,13 @@ class IntCoder:
 
 
 class IntCoderWithIo(IntCoder):
-    def __init__(self, memory, input_value):
+    def __init__(self, memory, input_values: List[int]):
         super(IntCoderWithIo, self).__init__(memory)
-        self.input_value = input_value
+        self.input_values = (n for n in input_values)
         self.output = None
 
     def get_input(self):
-        return self.input_value
+        return next(self.input_values)
 
     def handle_output(self, value):
         self.output = value

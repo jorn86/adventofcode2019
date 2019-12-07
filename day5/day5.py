@@ -3,7 +3,7 @@ from IntCoder import IntCoderWithIo
 
 def run(input_value):
     memory = [int(i) for i in open('./input.txt', 'r').read().split(',')]
-    coder = IntCoderWithIo(memory, input_value)
+    coder = IntCoderWithIo(memory, [input_value])
     coder.run()
     print(coder.output)
 

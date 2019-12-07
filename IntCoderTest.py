@@ -4,6 +4,10 @@ from IntCoder import IntCoder, IntCoderWithIo
 
 
 class IntCoderTest(unittest.TestCase):
+    def test_invalid_input(self):
+        with self.assertRaises(StopIteration):
+            IntCoderWithIo([3, 1, 99], []).run()
+
     def test_day2_example1(self):
         coder = IntCoder([1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50])
         coder.run()
@@ -56,40 +60,56 @@ class IntCoderTest(unittest.TestCase):
         self.assertEqual([1101, 100, -1, 4, 99], coder._memory)
 
     def test_day5_example3(self):
-        self.__day5_example([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], 7, 0)
-        self.__day5_example([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], 8, 1)
-        self.__day5_example([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], 9, 0)
+        self.__day5([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], 7, 0)
+        self.__day5([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], 8, 1)
+        self.__day5([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], 9, 0)
 
-        self.__day5_example([3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], 7, 1)
-        self.__day5_example([3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], 8, 0)
+        self.__day5([3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], 7, 1)
+        self.__day5([3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], 8, 0)
 
-        self.__day5_example([3, 3, 1108, -1, 8, 3, 4, 3, 99], 7, 0)
-        self.__day5_example([3, 3, 1108, -1, 8, 3, 4, 3, 99], 8, 1)
-        self.__day5_example([3, 3, 1108, -1, 8, 3, 4, 3, 99], 9, 0)
+        self.__day5([3, 3, 1108, -1, 8, 3, 4, 3, 99], 7, 0)
+        self.__day5([3, 3, 1108, -1, 8, 3, 4, 3, 99], 8, 1)
+        self.__day5([3, 3, 1108, -1, 8, 3, 4, 3, 99], 9, 0)
 
-        self.__day5_example([3, 3, 1107, -1, 8, 3, 4, 3, 99], 7, 1)
-        self.__day5_example([3, 3, 1107, -1, 8, 3, 4, 3, 99], 8, 0)
+        self.__day5([3, 3, 1107, -1, 8, 3, 4, 3, 99], 7, 1)
+        self.__day5([3, 3, 1107, -1, 8, 3, 4, 3, 99], 8, 0)
 
     def test_day5_example4(self):
         memory = [3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21,
                   125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99]
-        self.__day5_example(memory, 7, 999)
-        self.__day5_example(memory, 8, 1000)
-        self.__day5_example(memory, 9, 1001)
-
-    def __day5_example(self, memory, input_value, output):
-        self.assertEqual(self.__with_io(memory, input_value), output)
+        self.__day5(memory, 7, 999)
+        self.__day5(memory, 8, 1000)
+        self.__day5(memory, 9, 1001)
 
     def test_day5_part1(self):
-        out = self.__with_io(IntCoder.read_file('./day5/input.txt'), 1)
-        self.assertEqual(3122865, out)
+        self.__day5(IntCoder.read_file('./day5/input.txt'), 1, 3122865)
 
     def test_day5_part2(self):
-        out = self.__with_io(IntCoder.read_file('./day5/input.txt'), 5)
-        self.assertEqual(773660, out)
+        self.__day5(IntCoder.read_file('./day5/input.txt'), 5, 773660)
+
+    def __day5(self, memory, input_value, output):
+        self.assertEqual(output, self.__with_io(memory, [input_value]))
+
+    def test_day7_example1(self):
+        self.__day7([3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0], [4, 3, 2, 1, 0], 43210)
+        self.__day7([3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0],
+                    [0, 1, 2, 3, 4], 54321)
+        self.__day7([3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31,
+                     1, 32, 31, 31, 4, 31, 99, 0, 0, 0], [1, 0, 4, 3, 2], 65210)
+
+    def test_day7_part1(self):
+        self.__day7(IntCoder.read_file('./day7/input.txt'), [3, 1, 4, 2, 0], 92663)
+
+    def __day7(self, memory, sequence, answer):
+        v1 = self.__with_io(memory, [sequence[0], 0])
+        v2 = self.__with_io(memory, [sequence[1], v1])
+        v3 = self.__with_io(memory, [sequence[2], v2])
+        v4 = self.__with_io(memory, [sequence[3], v3])
+        v5 = self.__with_io(memory, [sequence[4], v4])
+        self.assertEquals(answer, v5)
 
     @staticmethod
-    def __with_io(memory, input_value):
-        coder = IntCoderWithIo(memory, input_value)
+    def __with_io(memory, input_values):
+        coder = IntCoderWithIo(memory, input_values)
         coder.run()
         return coder.output
