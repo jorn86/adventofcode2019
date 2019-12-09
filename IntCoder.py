@@ -5,6 +5,7 @@ from typing import List
 class IntCoder:
     _memory = []
     __pointer = 0
+    __relative_base = 0
 
     def __init__(self, memory: List[int]):
         self._memory = memory
@@ -39,7 +40,6 @@ class IntCoder:
             self.__in(self.__index(self.__pointer + 1, mode1))
         elif opcode == 4:
             self.__out(self.__val(self.__pointer + 1, mode1))
-            return False
         elif opcode == 5:
             self.__if_true(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2))
         elif opcode == 6:
@@ -48,6 +48,8 @@ class IntCoder:
             self.__lt(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2), self.__index(self.__pointer + 3, mode3))
         elif opcode == 8:
             self.__eq(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2), self.__index(self.__pointer + 3, mode3))
+        elif opcode == 9:
+            self.__arb(self.__val(self.__pointer + 1, mode1))
         elif opcode == 99:
             return False
         else:
@@ -60,13 +62,17 @@ class IntCoder:
             return self._memory[index]
         elif mode == 1:
             return index
+        elif mode == 2:
+            return self._memory[index + self.__relative_base]
         else:
             raise ValueError('Unknown parameter mode {}'.format(mode))
 
     def __index(self, address, mode):
-        if mode != 0:
-            raise ValueError('Got mode {} for index only type param'.format(mode))
-        return self._memory[address]
+        if mode == 0:
+            return self._memory[address]
+        elif mode == 2:
+            return self._memory[address] + self.__relative_base
+        raise ValueError('Got mode {} for index only type param'.format(mode))
 
     def __add(self, first, second, result):
         self._memory[result] = first + second
@@ -98,6 +104,16 @@ class IntCoder:
         self._memory[result] = 1 if first == second else 0
         self.__pointer += 4
 
+    def __arb(self, value):
+        self.__relative_base += value
+        self.__pointer += 2
+
+    @staticmethod
+    def extended_memory(program, size):
+        memory = [0] * size
+        memory[0:len(program)] = program
+        return memory
+
     @staticmethod
     def read_file(file):
         with open(file, 'r') as f:
@@ -108,10 +124,10 @@ class IntCoderWithIo(IntCoder):
     def __init__(self, memory, input_values: List[int]):
         super(IntCoderWithIo, self).__init__(memory)
         self.input_values = (n for n in input_values)
-        self.output = None
+        self.output = []
 
     def get_input(self):
         return next(self.input_values)
 
     def handle_output(self, value):
-        self.output = value
+        self.output.append(value)

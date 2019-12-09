@@ -88,26 +88,43 @@ class IntCoderTest(unittest.TestCase):
         self.__day5(IntCoder.read_file('./day5/input.txt'), 5, 773660)
 
     def __day5(self, memory, input_value, output):
-        self.assertEqual(output, self.__with_io(memory, [input_value]))
+        self.assertEqual(output, self.__with_io(memory, [input_value])[-1])
 
     def test_day7_example1(self):
         self.__day7_part1([3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0], [4, 3, 2, 1, 0], 43210)
-        self.__day7_part1([3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0],
-                          [0, 1, 2, 3, 4], 54321)
-        self.__day7_part1([3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31,
-                           1, 32, 31, 31, 4, 31, 99, 0, 0, 0], [1, 0, 4, 3, 2], 65210)
+        self.__day7_part1(
+            [3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0],
+            [0, 1, 2, 3, 4], 54321)
+        self.__day7_part1(
+            [3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31,
+             1, 32, 31, 31, 4, 31, 99, 0, 0, 0], [1, 0, 4, 3, 2], 65210)
 
     def test_day7_part1(self):
         self.__day7_part1(IntCoder.read_file('./day7/input.txt'), [3, 1, 4, 2, 0], 92663)
-        
+
     def __day7_part1(self, memory, sequence, answer):
-        v1 = self.__with_io(memory, [sequence[0], 0])
-        v2 = self.__with_io(memory, [sequence[1], v1])
-        v3 = self.__with_io(memory, [sequence[2], v2])
-        v4 = self.__with_io(memory, [sequence[3], v3])
-        v5 = self.__with_io(memory, [sequence[4], v4])
-        self.assertEquals(answer, v5)
-        
+        v1 = self.__with_io(memory, [sequence[0], 0])[-1]
+        v2 = self.__with_io(memory, [sequence[1], v1])[-1]
+        v3 = self.__with_io(memory, [sequence[2], v2])[-1]
+        v4 = self.__with_io(memory, [sequence[3], v3])[-1]
+        v5 = self.__with_io(memory, [sequence[4], v4])[-1]
+        self.assertEqual(answer, v5)
+
+    def test_day9_example(self):
+        program = [109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99]
+        self.__day9(IntCoder.extended_memory(program, 102), [], program)
+        self.__day9([1102, 34915192, 34915192, 7, 4, 7, 99, 0], [], [1219070632396864])
+        self.__day9([104, 1125899906842624, 99], [], [1125899906842624])
+
+    def test_day9_part1(self):
+        self.__day9(IntCoder.extended_memory(IntCoder.read_file('./day9/input.txt'), 1030), [1], [3839402290])
+
+    def test_day9_part2(self):
+        self.__day9(IntCoder.extended_memory(IntCoder.read_file('./day9/input.txt'), 1077), [2], [35734])
+
+    def __day9(self, memory, _in, output):
+        self.assertEqual(output, self.__with_io(memory, _in))
+
     @staticmethod
     def __with_io(memory, input_values):
         coder = IntCoderWithIo(memory, input_values)
