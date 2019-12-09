@@ -91,23 +91,23 @@ class IntCoderTest(unittest.TestCase):
         self.assertEqual(output, self.__with_io(memory, [input_value]))
 
     def test_day7_example1(self):
-        self.__day7([3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0], [4, 3, 2, 1, 0], 43210)
-        self.__day7([3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0],
-                    [0, 1, 2, 3, 4], 54321)
-        self.__day7([3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31,
-                     1, 32, 31, 31, 4, 31, 99, 0, 0, 0], [1, 0, 4, 3, 2], 65210)
+        self.__day7_part1([3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0], [4, 3, 2, 1, 0], 43210)
+        self.__day7_part1([3, 23, 3, 24, 1002, 24, 10, 24, 1002, 23, -1, 23, 101, 5, 23, 23, 1, 24, 23, 23, 4, 23, 99, 0, 0],
+                          [0, 1, 2, 3, 4], 54321)
+        self.__day7_part1([3, 31, 3, 32, 1002, 32, 10, 32, 1001, 31, -2, 31, 1007, 31, 0, 33, 1002, 33, 7, 33, 1, 33, 31, 31,
+                           1, 32, 31, 31, 4, 31, 99, 0, 0, 0], [1, 0, 4, 3, 2], 65210)
 
     def test_day7_part1(self):
-        self.__day7(IntCoder.read_file('./day7/input.txt'), [3, 1, 4, 2, 0], 92663)
-
-    def __day7(self, memory, sequence, answer):
+        self.__day7_part1(IntCoder.read_file('./day7/input.txt'), [3, 1, 4, 2, 0], 92663)
+        
+    def __day7_part1(self, memory, sequence, answer):
         v1 = self.__with_io(memory, [sequence[0], 0])
         v2 = self.__with_io(memory, [sequence[1], v1])
         v3 = self.__with_io(memory, [sequence[2], v2])
         v4 = self.__with_io(memory, [sequence[3], v3])
         v5 = self.__with_io(memory, [sequence[4], v4])
         self.assertEquals(answer, v5)
-
+        
     @staticmethod
     def __with_io(memory, input_values):
         coder = IntCoderWithIo(memory, input_values)

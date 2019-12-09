@@ -1,3 +1,4 @@
+import threading
 from typing import List
 
 
@@ -18,6 +19,9 @@ class IntCoder:
     def handle_output(self, value):
         print(value)
 
+    def read_pointer(self):
+        return self.read(self.__pointer)
+
     def read(self, index):
         return self._memory[index]
 
@@ -35,6 +39,7 @@ class IntCoder:
             self.__in(self.__index(self.__pointer + 1, mode1))
         elif opcode == 4:
             self.__out(self.__val(self.__pointer + 1, mode1))
+            return False
         elif opcode == 5:
             self.__if_true(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2))
         elif opcode == 6:
