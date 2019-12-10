@@ -1,112 +1,135 @@
-import threading
 from typing import List
 
 
 class IntCoder:
-    _memory = []
-    __pointer = 0
-    __relative_base = 0
-
-    def __init__(self, memory: List[int]):
+    def __init__(self, memory: List[int], input_values: List[int] = None):
         self._memory = memory
+        self._pointer = 0
+        self._relative_base = 0
+        self._input = iter(input_values or [])
+        self.output = []
+        self._opcodes = {
+            1: self._add,
+            2: self._multiply,
+            3: self._in,
+            4: self._out,
+            5: self._if_true,
+            6: self._if_false,
+            7: self._less_than,
+            8: self._equal,
+            9: self._adjust_relative_base,
+            99: self._halt,
+        }
 
     def run(self):
-        while self.__step():
+        while self._step():
             pass
 
     def get_input(self):
-        raise ValueError('No input defined')
+        try:
+            return next(self._input)
+        except StopIteration:
+            raise ValueError('Input exhausted')
 
     def handle_output(self, value):
-        print(value)
+        self.output.append(value)
 
-    def read_pointer(self):
-        return self.read(self.__pointer)
+    def peek_pointer(self):
+        return self.peek_index(self._pointer)
 
-    def read(self, index):
+    def peek_index(self, index):
         return self._memory[index]
 
-    def __step(self):
-        instruction = self._memory[self.__pointer]
-        opcode = instruction % 100
-        mode1 = (instruction // 100) % 10
-        mode2 = (instruction // 1000) % 10
-        mode3 = instruction // 10000
-        if opcode == 1:
-            self.__add(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2), self.__index(self.__pointer + 3, mode3))
-        elif opcode == 2:
-            self.__mul(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2), self.__index(self.__pointer + 3, mode3))
-        elif opcode == 3:
-            self.__in(self.__index(self.__pointer + 1, mode1))
-        elif opcode == 4:
-            self.__out(self.__val(self.__pointer + 1, mode1))
-        elif opcode == 5:
-            self.__if_true(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2))
-        elif opcode == 6:
-            self.__if_false(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2))
-        elif opcode == 7:
-            self.__lt(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2), self.__index(self.__pointer + 3, mode3))
-        elif opcode == 8:
-            self.__eq(self.__val(self.__pointer + 1, mode1), self.__val(self.__pointer + 2, mode2), self.__index(self.__pointer + 3, mode3))
-        elif opcode == 9:
-            self.__arb(self.__val(self.__pointer + 1, mode1))
-        elif opcode == 99:
-            return False
-        else:
-            raise ValueError('Unknown opcode {} in instruction {}'.format(opcode, instruction))
-        return True
+    def _fetch(self):
+        index = self._memory[self._pointer]
+        self._pointer += 1
+        return index
 
-    def __val(self, address, mode):
-        index = self._memory[address]
+    def _index(self, mode):
+        index = self._fetch()
+        if mode == 0:
+            return index
+        elif mode == 2:
+            return index + self._relative_base
+        raise ValueError(f'Got mode {mode} for index only type param')
+
+    def _val(self, mode):
+        index = self._fetch()
         if mode == 0:
             return self._memory[index]
         elif mode == 1:
             return index
         elif mode == 2:
-            return self._memory[index + self.__relative_base]
+            return self._memory[index + self._relative_base]
         else:
-            raise ValueError('Unknown parameter mode {}'.format(mode))
+            raise ValueError(f'Unknown parameter mode {mode}')
 
-    def __index(self, address, mode):
-        if mode == 0:
-            return self._memory[address]
-        elif mode == 2:
-            return self._memory[address] + self.__relative_base
-        raise ValueError('Got mode {} for index only type param'.format(mode))
+    def _step(self):
+        instruction = self._fetch()
+        opcode = instruction % 100
+        mode1 = (instruction // 100) % 10
+        mode2 = (instruction // 1000) % 10
+        mode3 = instruction // 10000
+        try:
+            return self._opcodes[opcode](mode1, mode2, mode3)
+        except KeyError:
+            raise ValueError(f'Unknown opcode {opcode} in instruction {instruction}')
 
-    def __add(self, first, second, result):
-        self._memory[result] = first + second
-        self.__pointer += 4
+    def _add(self, mode1, mode2, mode3):
+        first = self._val(mode1)
+        second = self._val(mode2)
+        self._memory[self._index(mode3)] = first + second
+        return True
 
-    def __mul(self, first, second, result):
-        self._memory[result] = first * second
-        self.__pointer += 4
+    def _multiply(self, mode1, mode2, mode3):
+        first = self._val(mode1)
+        second = self._val(mode2)
+        self._memory[self._index(mode3)] = first * second
+        return True
 
-    def __in(self, index):
-        self._memory[index] = self.get_input()
-        self.__pointer += 2
+    def _in(self, mode1, mode2, mode3):
+        self._memory[self._index(mode1)] = self.get_input()
+        return True
 
-    def __out(self, value):
-        self.handle_output(value)
-        self.__pointer += 2
+    def _out(self, mode1, mode2, mode3):
+        self.handle_output(self._val(mode1))
+        return True
 
-    def __if_true(self, first, second):
-        self.__pointer = second if first != 0 else self.__pointer + 3
+    def _if_true(self, mode1, mode2, mode3):
+        #  do not inline, values always need to be read in order to increment pointer
+        first = self._val(mode1)
+        second = self._val(mode2)
+        if first != 0:
+            self._pointer = second
+        return True
 
-    def __if_false(self, first, second):
-        self.__pointer = second if first == 0 else self.__pointer + 3
+    def _if_false(self, mode1, mode2, mode3):
+        #  do not inline, values always need to be read in order to increment pointer
+        first = self._val(mode1)
+        second = self._val(mode2)
+        if first == 0:
+            self._pointer = second
+        return True
 
-    def __lt(self, first, second, result):
-        self._memory[result] = 1 if first < second else 0
-        self.__pointer += 4
+    def _less_than(self, mode1, mode2, mode3):
+        first = self._val(mode1)
+        second = self._val(mode2)
+        self._memory[self._index(mode3)] = 1 if first < second else 0
+        return True
 
-    def __eq(self, first, second, result):
-        self._memory[result] = 1 if first == second else 0
-        self.__pointer += 4
+    def _equal(self, mode1, mode2, mode3):
+        first = self._val(mode1)
+        second = self._val(mode2)
+        self._memory[self._index(mode3)] = 1 if first == second else 0
+        return True
 
-    def __arb(self, value):
-        self.__relative_base += value
-        self.__pointer += 2
+    def _adjust_relative_base(self, mode1, mode2, mode3):
+        self._relative_base += self._val(mode1)
+        return True
+
+    @staticmethod
+    def _halt(mode1, mode2, mode3):
+        return False
 
     @staticmethod
     def extended_memory(program, size):
@@ -119,15 +142,3 @@ class IntCoder:
         with open(file, 'r') as f:
             return [int(s) for s in f.read().split(',')]
 
-
-class IntCoderWithIo(IntCoder):
-    def __init__(self, memory, input_values: List[int]):
-        super(IntCoderWithIo, self).__init__(memory)
-        self.input_values = (n for n in input_values)
-        self.output = []
-
-    def get_input(self):
-        return next(self.input_values)
-
-    def handle_output(self, value):
-        self.output.append(value)

@@ -12,7 +12,7 @@ def run(seq):
     c3 = Day7Coder(memory, seq[2])
     c4 = Day7Coder(memory, seq[3])
     c5 = Day7Coder(memory, seq[4])
-    while c5.read_pointer() != 99:
+    while c5.peek_pointer() != 99:
         c1.run()
         c2.run()
         c3.run()

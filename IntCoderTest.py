@@ -1,12 +1,12 @@
 import unittest
 
-from IntCoder import IntCoder, IntCoderWithIo
+from IntCoder import IntCoder
 
 
 class IntCoderTest(unittest.TestCase):
     def test_invalid_input(self):
-        with self.assertRaises(StopIteration):
-            IntCoderWithIo([3, 1, 99], []).run()
+        with self.assertRaises(ValueError):
+            IntCoder([3, 1, 99]).run()
 
     def test_day2_example1(self):
         coder = IntCoder([1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50])
@@ -39,7 +39,7 @@ class IntCoderTest(unittest.TestCase):
         memory[2] = 2
         coder = IntCoder(memory)
         coder.run()
-        self.assertEqual(2782414, coder.read(0))
+        self.assertEqual(2782414, coder.peek_index(0))
 
     def test_day2_part2(self):
         memory = IntCoder.read_file('./day2/input.txt')
@@ -47,7 +47,7 @@ class IntCoderTest(unittest.TestCase):
         memory[2] = 20
         coder = IntCoder(memory)
         coder.run()
-        self.assertEqual(19690720, coder.read(0))
+        self.assertEqual(19690720, coder.peek_index(0))
 
     def test_day5_example1(self):
         coder = IntCoder([1002, 4, 3, 4, 33])
@@ -127,6 +127,6 @@ class IntCoderTest(unittest.TestCase):
 
     @staticmethod
     def __with_io(memory, input_values):
-        coder = IntCoderWithIo(memory, input_values)
+        coder = IntCoder(memory, input_values)
         coder.run()
         return coder.output

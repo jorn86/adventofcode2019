@@ -1,9 +1,9 @@
-from IntCoder import IntCoderWithIo
+from IntCoder import IntCoder
 
 
 def run(input_value):
     memory = [int(i) for i in open('./input.txt', 'r').read().split(',')]
-    coder = IntCoderWithIo(memory, [input_value])
+    coder = IntCoder(memory, [input_value])
     coder.run()
     print(coder.output)
 

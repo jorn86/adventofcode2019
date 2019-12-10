@@ -12,7 +12,7 @@ for layer in layers:
         _min = zeroes
         ones = layer.count(1)
         twos = layer.count(2)
-        print('{}: {}x{}={}'.format(zeroes, ones, twos, ones * twos))
+        print(f'{zeroes}: {ones}x{twos}={ones * twos}')
 
 
 def paint(index):

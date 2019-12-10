@@ -14,4 +14,4 @@ print(run(12, 2))  # part 1
 for in1 in range(0, 99):
     for in2 in range(0, 99):
         if run(in1, in2) == 19690720:
-            print('{}{}'.format(in1, in2))  # part 2
+            print(f'{in1}{in2}')  # part 2
