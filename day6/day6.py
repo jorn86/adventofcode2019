@@ -26,5 +26,5 @@ for i in range(0, min(len(you), len(san))):
     if you[i] != san[i]:
         common_to_you = len(you) - i - 1  # don't count YOU
         common_to_san = len(san) - i - 1  # don't count SAN
-        print((common_to_san + common_to_you))
+        print(common_to_san + common_to_you)
         exit()

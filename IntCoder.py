@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Iterable
 
 
 class IntCoder:
-    def __init__(self, memory: List[int], input_values: List[int] = None):
+    def __init__(self, memory: List[int], input_values: Iterable[int] = None):
         self._memory = memory
         self._pointer = 0
         self._relative_base = 0
@@ -21,23 +21,24 @@ class IntCoder:
             99: self._halt,
         }
 
-    def run(self):
+    def run(self) -> None:
         while self._step():
             pass
 
-    def get_input(self):
+    def get_input(self) -> int:
         try:
             return next(self._input)
         except StopIteration:
             raise ValueError('Input exhausted')
 
-    def handle_output(self, value):
+    def handle_output(self, value: int):
         self.output.append(value)
+        return True
 
-    def peek_pointer(self):
+    def peek_pointer(self) -> int:
         return self.peek_index(self._pointer)
 
-    def peek_index(self, index):
+    def peek_index(self, index: int) -> int:
         return self._memory[index]
 
     def _fetch(self):
@@ -92,8 +93,7 @@ class IntCoder:
         return True
 
     def _out(self, mode1, mode2, mode3):
-        self.handle_output(self._val(mode1))
-        return True
+        return self.handle_output(self._val(mode1))
 
     def _if_true(self, mode1, mode2, mode3):
         #  do not inline, values always need to be read in order to increment pointer
@@ -132,13 +132,13 @@ class IntCoder:
         return False
 
     @staticmethod
-    def extended_memory(program, size):
+    def extended_memory(program: List[int], size: int):
         memory = [0] * size
         memory[0:len(program)] = program
         return memory
 
     @staticmethod
-    def read_file(file):
+    def read_file(file: str):
         with open(file, 'r') as f:
             return [int(s) for s in f.read().split(',')]
 
