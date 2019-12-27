@@ -34,7 +34,7 @@ class IntCoderTest(unittest.TestCase):
         self.assertEqual([30, 1, 1, 4, 2, 5, 6, 0, 99], coder._memory)
 
     def test_day2_part1(self):
-        memory = IntCoder.read_file('./day2/input.txt')
+        memory = IntCoder.read_file('../day2/input.txt')
         memory[1] = 12
         memory[2] = 2
         coder = IntCoder(memory)
@@ -42,7 +42,7 @@ class IntCoderTest(unittest.TestCase):
         self.assertEqual(2782414, coder.peek_index(0))
 
     def test_day2_part2(self):
-        memory = IntCoder.read_file('./day2/input.txt')
+        memory = IntCoder.read_file('../day2/input.txt')
         memory[1] = 98
         memory[2] = 20
         coder = IntCoder(memory)
@@ -82,10 +82,10 @@ class IntCoderTest(unittest.TestCase):
         self.__day5(memory, 9, 1001)
 
     def test_day5_part1(self):
-        self.__day5(IntCoder.read_file('./day5/input.txt'), 1, 3122865)
+        self.__day5(IntCoder.read_file('../day5/input.txt'), 1, 3122865)
 
     def test_day5_part2(self):
-        self.__day5(IntCoder.read_file('./day5/input.txt'), 5, 773660)
+        self.__day5(IntCoder.read_file('../day5/input.txt'), 5, 773660)
 
     def __day5(self, memory, input_value, output):
         self.assertEqual(output, self.__with_io(memory, [input_value])[-1])
@@ -100,7 +100,7 @@ class IntCoderTest(unittest.TestCase):
              1, 32, 31, 31, 4, 31, 99, 0, 0, 0], [1, 0, 4, 3, 2], 65210)
 
     def test_day7_part1(self):
-        self.__day7_part1(IntCoder.read_file('./day7/input.txt'), [3, 1, 4, 2, 0], 92663)
+        self.__day7_part1(IntCoder.read_file('../day7/input.txt'), [3, 1, 4, 2, 0], 92663)
 
     def __day7_part1(self, memory, sequence, answer):
         v1 = self.__with_io(memory, [sequence[0], 0])[-1]
@@ -117,10 +117,10 @@ class IntCoderTest(unittest.TestCase):
         self.__day9([104, 1125899906842624, 99], [], [1125899906842624])
 
     def test_day9_part1(self):
-        self.__day9(IntCoder.extended_memory(IntCoder.read_file('./day9/input.txt'), 1030), [1], [3839402290])
+        self.__day9(IntCoder.extended_memory(IntCoder.read_file('../day9/input.txt'), 1030), [1], [3839402290])
 
     def test_day9_part2(self):
-        self.__day9(IntCoder.extended_memory(IntCoder.read_file('./day9/input.txt'), 1077), [2], [35734])
+        self.__day9(IntCoder.extended_memory(IntCoder.read_file('../day9/input.txt'), 1077), [2], [35734])
 
     def __day9(self, memory, _in, output):
         self.assertEqual(output, self.__with_io(memory, _in))
